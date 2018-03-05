@@ -24,7 +24,7 @@ def plot_state_trajectories(T, xs):
         if stop:
             break
 
-    plt.show()
+    #plt.show()
 
 def animate_pendulum(T, xs):
 
@@ -43,7 +43,7 @@ def animate_pendulum(T, xs):
     y1 = np.zeros(xs[:,2].shape)
 
     x2 = l * np.sin(xs[:,0]) + x1
-    y2 = -l * np.cos(xs[:,0])
+    y2 = l * np.cos(xs[:,0])
 
     def init():
         line.set_data([], [])

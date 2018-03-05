@@ -1,31 +1,29 @@
 import control
 import numpy as np
 import scipy.integrate as integrate
-from matplotlib.pyplot import *
+import matplotlib.pyplot as plt
 import plot_helper
 
 # parameters
-k = 0.00    # friction
+k = 0.50    # friction
 g = 9.81    # gravity
 
+# state: x = (ang, ang_vel, pos, vel)
 def nonlinear_pendulum(x, t, u):
-    return [x[1], -k*x[1]-g*np.sin(x[0])+u*np.cos(x[0]), x[3], u]
+    return [x[1], -k*x[1]+g*np.sin(x[0])-u*np.cos(x[0]), x[3], u]
 
 def nonlinear_pendulum_feedback(x,t,K):
     u = np.dot(K,x)
     return nonlinear_pendulum(x,t,u)
 
-# state: x = (ang, ang_vel, pos, vel)
 # A =   [  0  1 0 0 ]
-#       [ -g -k 0 0 ]
+#       [  g -k 0 0 ]
 #       [  0  0 0 1 ]
 #       [  0  0 0 0 ]
-# B  = [ 0 0 0 1 ]
-
-A = np.array([[0, 1, 0, 0], [-g, -k, 0, 0], [0, 0, 0, 1], [0,0,0,0]])
-B = np.array([[0],[1],[0],[1]])
-C = np.identity(4)
-D = np.zeros((4, 1))
+# B  = [ 0 -1 0 1 ]
+# upper equilibrium
+A = np.array([[0, 1, 0, 0], [g, -k, 0, 0], [0, 0, 0, 1], [0,0,0,0]])
+B = np.array([[0],[-1],[0],[1]])
 
 def linear_pendulum(x, t, u):
     return np.dot(A,x) + np.dot(B,u)
@@ -45,14 +43,16 @@ K, _, _ = control.lqr(A, B, Q, R)
 K = -K
 
 # simulation of the system without control
-x0 = np.array([2.0, 0.0, 1.0, 0.0])
-T = np.arange(0.0, 10.0, 0.05)
+x0 = np.array([0.1, 0.0, -1.0, 0.0])
+T = np.arange(0.0, 5.0, 0.05)
 u = np.array([0.0])
 
 xout = integrate.odeint(nonlinear_pendulum, x0, T, args=(u,))
-#xout = integrate.odeint(nonlinear_pendulum_feedback, x0, T, args=(K,))
+xout_l = integrate.odeint(linear_pendulum, x0, T, args=(u,))
+#xout = integrate.odeint(linear_pendulum_feedback, x0, T, args=(Kp,))
 
 plot_helper.animate_pendulum(T, xout)
 plot_helper.plot_state_trajectories(T, xout)
-
+plot_helper.plot_state_trajectories(T, xout_l)
+plt.show()
 pass
