@@ -1,0 +1,6 @@
+Required Python libraries:
+- slycot
+- control
+
+(Just do pip install slycot, pip install control)
+
