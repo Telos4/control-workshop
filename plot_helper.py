@@ -31,7 +31,7 @@ def animate_pendulum(T, xs):
     l = 1
 
     fig = plt.figure()
-    ax = fig.add_subplot(111, autoscale_on=False, xlim=(-2, 2), ylim=(-1.2*l, 1.1*l))
+    ax = fig.add_subplot(111, autoscale_on=False, xlim=(np.min(xs[:,2]) - l, np.max(xs[:,2]) + l), ylim=(-1.2*l, 1.1*l))
     ax.set_aspect('equal')
     ax.grid()
 
